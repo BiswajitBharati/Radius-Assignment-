@@ -23,6 +23,11 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
         jobNwFacilities = CoroutineScope(Dispatchers.IO).launch {
             val result = facilityRepository.getNetworkFacilities()
             Log.d(TAG, "getNetworkFacilities() == isSuccess: ${result?.isSuccessful} response: ${result?.body()}")
+
+            result?.body()?.let {
+                facilityRepository.insertLocalFacilities(facilityExclusion = it)
+                facilityRepository.getLocalFacilities()
+            }
         }
     }
 
