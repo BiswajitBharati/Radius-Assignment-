@@ -20,11 +20,29 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
     }
 
     suspend fun insertLocalFacilities(facilityExclusion: FacilityExclusion) {
-        Log.d(TAG, "updateLocalFacilities()")
+        Log.d(TAG, "insertLocalFacilities()")
         facilityExclusion.facilities.forEach {
             val facilitiesModel = convertToLocalFacilities(facilities = it, exclusionsItems = facilityExclusion.exclusions)
             facilityLocalDataSource.insertLocalFacilities(facilitiesModel = facilitiesModel)
         }
+    }
+
+    suspend fun updateLocalFacilities(facilityExclusion: FacilityExclusion) {
+        Log.d(TAG, "updateLocalFacilities()")
+        facilityExclusion.facilities.forEach {
+            val facilitiesModel = convertToLocalFacilities(facilities = it, exclusionsItems = facilityExclusion.exclusions)
+            facilityLocalDataSource.updateLocalFacilities(facilitiesModel = facilitiesModel)
+        }
+    }
+
+    suspend fun deleteLocalFacility(facilitiesModel: FacilitiesModel) {
+        Log.d(TAG, "deleteLocalFacility()")
+        facilityLocalDataSource.deleteLocalFacility(facilitiesModel = facilitiesModel)
+    }
+
+    suspend fun deleteLocalFacilities() {
+        Log.d(TAG, "deleteLocalFacilities()")
+        facilityLocalDataSource.deleteLocalFacilities()
     }
 
     suspend fun getLocalFacilities() {
@@ -32,7 +50,8 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
         facilityLocalDataSource.getLocalFacilities()
     }
 
-    private fun convertToLocalFacilities(facilities: Facilities, exclusionsItems : ArrayList<ArrayList<Exclusions>>) : FacilitiesModel {
+    private fun convertToLocalFacilities(facilities: Facilities,
+                                         exclusionsItems : ArrayList<ArrayList<Exclusions>>) : FacilitiesModel {
         Log.d(TAG, "convertToLocalFacilities()")
         val optionsList: RealmList<OptionsModel> = realmListOf()
         facilities.options.forEach {
@@ -40,7 +59,10 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
                 id         = it.id
                 icon       = it.icon
                 name       = it.name
-                exclusions = getExclusionList(facId = facilities.facilityId, optId = it.id, exclusionsItems = exclusionsItems)
+                exclusions = getExclusions(
+                    facId           = facilities.facilityId,
+                    optId           = it.id,
+                    exclusionsItems = exclusionsItems)
             }
             optionsList.add(optionModel)
         }
@@ -51,10 +73,10 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
         }
     }
 
-    private fun getExclusionList(facId: String?,
+    private fun getExclusions(facId: String?,
                                  optId: String?,
                                  exclusionsItems : ArrayList<ArrayList<Exclusions>>) : RealmList<ExclusionsModel> {
-        Log.d(TAG, "getExclusionList() == facId: $facId optId: $optId")
+        Log.d(TAG, "getExclusions() == facId: $facId optId: $optId")
         val exclusionList: RealmList<ExclusionsModel> = realmListOf()
         if (null == facId || null == optId) return exclusionList
         exclusionsItems.forEachIndexed { itemIndex, exclusions : ArrayList<Exclusions> ->
@@ -72,7 +94,7 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
                 }
             }
         }
-        Log.d(TAG, "getExclusionList() == exclusionList: ${exclusionList.size}")
+        Log.d(TAG, "getExclusions() == exclusion size: ${exclusionList.size}")
         return exclusionList
     }
 }

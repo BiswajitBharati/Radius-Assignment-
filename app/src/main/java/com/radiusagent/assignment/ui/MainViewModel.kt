@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
             Log.d(TAG, "getNetworkFacilities() == isSuccess: ${result?.isSuccessful} response: ${result?.body()}")
 
             result?.body()?.let {
-                facilityRepository.insertLocalFacilities(facilityExclusion = it)
+                facilityRepository.updateLocalFacilities(facilityExclusion = it)
                 facilityRepository.getLocalFacilities()
             }
         }
