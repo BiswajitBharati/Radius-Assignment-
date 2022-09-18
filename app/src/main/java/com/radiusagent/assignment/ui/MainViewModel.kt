@@ -1,9 +1,13 @@
 package com.radiusagent.assignment.ui
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.repository.FacilityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.realm.kotlin.notifications.ResultsChange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -16,7 +20,28 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
         private val TAG = MainViewModel::class.java.name
     }
 
-    var jobNwFacilities: Job? = null
+    private var jobFacilities: Job? = null
+    private var jobNwFacilities: Job? = null
+
+    private val _facilities = MutableLiveData<List<FacilitiesModel>>()
+    val facilities: LiveData<List<FacilitiesModel>> = _facilities
+
+    private val _isSuccess = MutableLiveData<Boolean>()
+    val isSuccess: LiveData<Boolean> = _isSuccess
+
+    init {
+        Log.d(TAG, "init")
+        getLocalFacilities()
+    }
+
+    private fun getLocalFacilities() {
+        jobFacilities = CoroutineScope(Dispatchers.IO).launch {
+            facilityRepository.getLocalFacilities().collect{ result: ResultsChange<FacilitiesModel> ->
+                Log.d(TAG, "getAllFacilities() == result: ${result.list.size}")
+                _facilities.postValue(result.list)
+            }
+        }
+    }
 
     fun getNetworkFacilities() {
         Log.d(TAG, "getNetworkFacilities()")
@@ -24,16 +49,19 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
             val result = facilityRepository.getNetworkFacilities()
             Log.d(TAG, "getNetworkFacilities() == isSuccess: ${result?.isSuccessful} response: ${result?.body()}")
 
-            result?.body()?.let {
-                facilityRepository.updateLocalFacilities(facilityExclusion = it)
-                facilityRepository.getLocalFacilities()
+            if (true == result?.isSuccessful) {
+                result.body()?.let {
+                    facilityRepository.updateLocalFacilities(facilityExclusion = it)
+                }
             }
+            _isSuccess.postValue(result?.isSuccessful ?: false)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "onCleared()")
+        jobFacilities?.cancel()
         jobNwFacilities?.cancel()
     }
 }

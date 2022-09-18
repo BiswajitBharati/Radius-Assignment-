@@ -5,7 +5,9 @@ import com.radiusagent.assignment.data.api.FacilityLocalDataSource
 import com.radiusagent.assignment.data.api.FacilityNetworkDataSource
 import com.radiusagent.assignment.data.model.*
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.notifications.ResultsChange
 import io.realm.kotlin.types.RealmList
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkDataSource,
@@ -45,9 +47,9 @@ class FacilityRepository(private val facilityNetworkDataSource: FacilityNetworkD
         facilityLocalDataSource.deleteLocalFacilities()
     }
 
-    suspend fun getLocalFacilities() {
+    fun getLocalFacilities() : Flow<ResultsChange<FacilitiesModel>> {
         Log.d(TAG, "getLocalFacilities()")
-        facilityLocalDataSource.getLocalFacilities()
+        return facilityLocalDataSource.getLocalFacilities()
     }
 
     private fun convertToLocalFacilities(facilities: Facilities,

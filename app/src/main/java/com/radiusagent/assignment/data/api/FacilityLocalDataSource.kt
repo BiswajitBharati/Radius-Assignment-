@@ -7,6 +7,7 @@ import com.radiusagent.assignment.data.model.OptionsModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.notifications.ResultsChange
+import kotlinx.coroutines.flow.Flow
 
 class FacilityLocalDataSource(private val realm: Realm) {
     companion object {
@@ -71,21 +72,9 @@ class FacilityLocalDataSource(private val realm: Realm) {
         }
     }
 
-    suspend fun getLocalFacilities() {
+    fun getLocalFacilities() : Flow<ResultsChange<FacilitiesModel>> {
         Log.d(TAG, "getLocalFacilities()")
 
-        realm.query<FacilitiesModel>().find()
-            .asFlow().collect{ result: ResultsChange<FacilitiesModel> ->
-                Log.d(TAG, "getAllFacilities() == result: ${result.list.size}")
-                result.list.forEach {
-                    Log.d(TAG, "getAllFacilities() == facility: ${it.facilityId} ${it.name}")
-                    it.options.forEach { opt ->
-                        Log.d(TAG, "getAllFacilities() == option: ${opt.id} ${opt.icon} ${opt.name}")
-                        opt.exclusions.forEach { exclusion ->
-                            Log.d(TAG, "getAllFacilities() == facility: ${it.facilityId} option: ${opt.id} exclusion: ${exclusion.exclusionId} ${exclusion.facilityId} ${exclusion.optionsId}")
-                        }
-                    }
-                }
-            }
+        return realm.query<FacilitiesModel>().find().asFlow()
     }
 }
