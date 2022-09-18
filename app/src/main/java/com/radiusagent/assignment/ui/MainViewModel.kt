@@ -38,9 +38,10 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
         return exclusionsMap
     }
 
-    fun setExclusions(key: String, options: OptionsModel) {
+    fun setExclusions(key: String, options: OptionsModel?) {
         Log.d(TAG, "setExclusions() == key: $key options: $options")
-        exclusionsMap[key] = options
+        if (null == options) exclusionsMap.remove(key = key)
+        else exclusionsMap[key] = options
         _exclusionsUpdated.value = true
     }
 

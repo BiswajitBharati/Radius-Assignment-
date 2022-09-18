@@ -11,7 +11,7 @@ import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.databinding.ItemFacilitiesBinding
 import com.radiusagent.assignment.ui.ItemClickListener
 
-class FacilitiesAdapter(private var exclusionsMap: HashMap<String, OptionsModel>, private val listener: ItemClickListener<String, OptionsModel>) : ListAdapter<FacilitiesModel, CustomViewHolder>(Companion) {
+class FacilitiesAdapter(private var exclusionsMap: HashMap<String, OptionsModel>, private val listener: ItemClickListener<String, OptionsModel?>) : ListAdapter<FacilitiesModel, CustomViewHolder>(Companion) {
     private val viewPool = RecyclerView.RecycledViewPool()
 
     companion object : DiffUtil.ItemCallback<FacilitiesModel>() {

@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         app:exclusionState="@{isUnderExclusion}"
         android:alpha="@{isUnderExclusion ? 0.5f : 1.0f}"
-        android:onClick="@{()-> optionsListener.onClickListener(facilityId, option)}"
+        android:onClick="@{()-> optionsListener.onClickListener(facilityId, isSelected ? null : option)}"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
         app:cardBackgroundColor="@color/white"

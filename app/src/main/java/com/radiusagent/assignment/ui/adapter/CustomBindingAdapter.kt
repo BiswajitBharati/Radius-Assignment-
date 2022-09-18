@@ -10,7 +10,7 @@ import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.ui.ItemClickListener
 
 @BindingAdapter(value = ["facilityId", "setOptions", "setOptionsListener"])
-fun RecyclerView.setRowOption(facilityId: String, options: List<OptionsModel>?, listener: ItemClickListener<String, OptionsModel>?) {
+fun RecyclerView.setRowOption(facilityId: String, options: List<OptionsModel>?, listener: ItemClickListener<String, OptionsModel?>?) {
     if (options != null && listener != null) {
         val optionsAdapter = OptionsAdapter(facilityId, listener)
         optionsAdapter.submitList(options)

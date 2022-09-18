@@ -10,7 +10,7 @@ import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.databinding.ItemOptionsBinding
 import com.radiusagent.assignment.ui.ItemClickListener
 
-class OptionsAdapter(private val facilityId: String, private val listener: ItemClickListener<String, OptionsModel>) : ListAdapter<OptionsModel, CustomViewHolder>(Companion) {
+class OptionsAdapter(private val facilityId: String, private val listener: ItemClickListener<String, OptionsModel?>) : ListAdapter<OptionsModel, CustomViewHolder>(Companion) {
 
     private var exclusions: ArrayList<ExclusionsModel> = arrayListOf()
     private var selectedId: String? = null

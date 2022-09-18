@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var facilitiesAdapter: FacilitiesAdapter
 
-    private val itemClickListener = object : ItemClickListener<String, OptionsModel> {
-        override fun onClickListener(key: String, item: OptionsModel) {
+    private val itemClickListener = object : ItemClickListener<String, OptionsModel?> {
+        override fun onClickListener(key: String, item: OptionsModel?) {
             Log.d(TAG, "onClickListener()")
             mainViewModel.setExclusions(key = key, options = item)
         }
@@ -56,7 +56,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun onExclusionUpdate(isUpdated: Boolean) {
         Log.d(TAG, "onExclusionUpdate() == isUpdated: $isUpdated")
-        if (isUpdated) facilitiesAdapter.notifyDataSetChanged()
+        if (isUpdated) {
+            facilitiesAdapter.notifyDataSetChanged()
+            var options = ""
+            mainViewModel.getExclusions().values.forEach {
+                options += "${it.name} "
+            }
+            Toast.makeText(this, "Selected options : $options", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun onFacilitiesResult(facilities: List<FacilitiesModel>?) {
