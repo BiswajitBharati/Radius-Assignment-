@@ -30,7 +30,7 @@ class OptionsAdapter(val listener: ItemClickListener<OptionsModel>) : ListAdapte
         val currentOption = getItem(position)
         val itemBinding = holder.binding as ItemOptionsBinding
 
-        itemBinding.root.setOnClickListener { listener.onClickListener(currentOption) }
+        itemBinding.optionsListener = listener
         itemBinding.option = currentOption
         itemBinding.executePendingBindings()
     }

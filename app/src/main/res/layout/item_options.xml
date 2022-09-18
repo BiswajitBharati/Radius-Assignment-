@@ -6,6 +6,9 @@
     <data>
         <import type="androidx.core.content.ContextCompat" />
         <variable
+            name="optionsListener"
+            type="com.radiusagent.assignment.ui.ItemClickListener" />
+        <variable
             name="option"
             type="com.radiusagent.assignment.data.model.OptionsModel" />
     </data>
@@ -13,6 +16,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{()-> optionsListener.onClickListener(option)}"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
         app:cardBackgroundColor="@color/white"
@@ -39,6 +43,7 @@
                 tools:src="@mipmap/ic_launcher_round" />
 
             <TextView
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

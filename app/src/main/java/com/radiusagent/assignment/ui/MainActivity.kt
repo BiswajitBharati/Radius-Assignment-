@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.radiusagent.assignment.R
+import com.radiusagent.assignment.data.model.Facilities
+import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.databinding.ActivityMainBinding
 import com.radiusagent.assignment.ui.adapter.FacilitiesAdapter
@@ -22,6 +24,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val mainViewModel: MainViewModel by viewModels()
 
+    lateinit var facilitiesAdapter: FacilitiesAdapter
+
+    val itemClickListener = object : ItemClickListener<OptionsModel> {
+        override fun onClickListener(item: OptionsModel) {
+            Toast.makeText(baseContext, "You click ${item.name}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate()")
@@ -30,18 +40,27 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
 
-        val facilitiesAdapter = FacilitiesAdapter(object : ItemClickListener<OptionsModel> {
-            override fun onClickListener(item: OptionsModel) {
-                Toast.makeText(baseContext, "You click ${item.name}", Toast.LENGTH_LONG).show()
-            }
-        })
-
+        facilitiesAdapter = FacilitiesAdapter(itemClickListener)
         facilitiesAdapter.submitList(mainViewModel.facilities.value ?: realmListOf())
         binding.facilitiesAdapter = facilitiesAdapter
 
-        mainViewModel.facilities.observe(this) {
-            Log.d(TAG, "onCreate() == facilities size: ${it?.size}")
-            facilitiesAdapter.submitList(it ?: realmListOf())
-        }
+        initObservers()
+    }
+
+    private fun initObservers() {
+        Log.d(TAG, "initObservers()")
+        mainViewModel.isSuccess.observe(this, this::onFacilitiesResponse)
+        mainViewModel.facilities.observe(this, this::onFacilitiesResult)
+    }
+
+    private fun onFacilitiesResult(facilities: List<FacilitiesModel>?) {
+        Log.d(TAG, "onFacilitiesResponse() == facilities size: ${facilities?.size}")
+        facilitiesAdapter.submitList(facilities ?: realmListOf())
+    }
+
+    private fun onFacilitiesResponse(isSuccess: Boolean) {
+        Log.d(TAG, "onFacilitiesResponse() == isSuccess: $isSuccess")
+        val response = if (isSuccess) "Facilities fetched successfully!" else "Facilities fetch failed!"
+        Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
     }
 }

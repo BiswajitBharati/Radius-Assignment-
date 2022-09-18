@@ -30,15 +30,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_facilities" />
 
-        <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fetchFacilities"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fetch Facilities!"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:onClick="@{()->mainViewModel.getNetworkFacilities()}"
+            app:srcCompat="@android:drawable/ic_menu_more"
+            android:contentDescription="@string/app_name"
+            tools:ignore="MissingConstraints"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
