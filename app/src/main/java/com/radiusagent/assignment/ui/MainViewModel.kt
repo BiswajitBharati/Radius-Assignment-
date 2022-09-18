@@ -68,6 +68,7 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
 
             if (true == result?.isSuccessful) {
                 result.body()?.let {
+                    exclusionsMap.clear()
                     facilityRepository.updateLocalFacilities(facilityExclusion = it)
                 }
             }
