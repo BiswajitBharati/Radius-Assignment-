@@ -1,11 +1,15 @@
 package com.radiusagent.assignment.ui
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.radiusagent.assignment.BackgroundWorker
 import com.radiusagent.assignment.R
 import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.model.OptionsModel
@@ -13,6 +17,7 @@ import com.radiusagent.assignment.databinding.ActivityMainBinding
 import com.radiusagent.assignment.ui.adapter.FacilitiesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.ext.realmListOf
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -45,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         binding.facilitiesAdapter = facilitiesAdapter
 
         initObservers()
+        setUpWorkManager()
     }
 
     override fun onResume() {
@@ -59,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.exclusionsUpdated.observe(this, this::onExclusionUpdate)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun onExclusionUpdate(isUpdated: Boolean) {
         Log.d(TAG, "onExclusionUpdate() == isUpdated: $isUpdated")
         if (isUpdated) {
@@ -80,5 +87,20 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onFacilitiesResponse() == isSuccess: $isSuccess")
         val response = if (isSuccess) "Facilities fetched successfully!" else "Facilities fetch failed!"
         Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setUpWorkManager() {
+        Log.d(TAG, "setUpWorkManager()")
+        val periodicWorkRequest =
+            PeriodicWorkRequestBuilder<BackgroundWorker>(15, TimeUnit.MINUTES)
+                .setInitialDelay(15, TimeUnit.MINUTES).build()
+
+        val workManager = WorkManager.getInstance(this)
+        workManager.enqueue(periodicWorkRequest)
+        workManager.getWorkInfoByIdLiveData(periodicWorkRequest.id).observeForever { workInfo ->
+            if (null != workInfo) {
+                Log.d(TAG, "setUpWorkManager() == Status changed to ${workInfo.state.isFinished}")
+            }
+        }
     }
 }
