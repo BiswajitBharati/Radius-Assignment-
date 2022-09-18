@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.radiusagent.assignment.data.api.AppPreferences
 import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.data.repository.FacilityRepository
@@ -16,9 +17,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val facilityRepository: FacilityRepository) : ViewModel() {
+class MainViewModel @Inject constructor(private val appPreferences: AppPreferences,
+                                        private val facilityRepository: FacilityRepository) : ViewModel() {
     companion object {
         private val TAG = MainViewModel::class.java.name
+        private const val DEFERRED_TIME = 86400000L // 24 Hour
     }
 
     private var jobFacilities: Job? = null
@@ -60,19 +63,24 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
         }
     }
 
-    fun getNetworkFacilities() {
+    fun getNetworkFacilities(isForceRefresh: Boolean) {
         Log.d(TAG, "getNetworkFacilities()")
         jobNwFacilities = CoroutineScope(Dispatchers.IO).launch {
-            val result = facilityRepository.getNetworkFacilities()
-            Log.d(TAG, "getNetworkFacilities() == isSuccess: ${result?.isSuccessful} response: ${result?.body()}")
+            val currentTime = System.currentTimeMillis()
+            Log.d(TAG, "getNetworkFacilities() == currentTime: $currentTime lastRefreshTime: ${appPreferences.lastRefreshTime}")
+            if (isForceRefresh || 0L == appPreferences.lastRefreshTime || currentTime - appPreferences.lastRefreshTime > DEFERRED_TIME) {
+                val result = facilityRepository.getNetworkFacilities()
+                Log.d(TAG, "getNetworkFacilities() == isSuccess: ${result?.isSuccessful} response: ${result?.body()}")
 
-            if (true == result?.isSuccessful) {
-                result.body()?.let {
-                    exclusionsMap.clear()
-                    facilityRepository.updateLocalFacilities(facilityExclusion = it)
+                if (true == result?.isSuccessful) {
+                    result.body()?.let {
+                        appPreferences.lastRefreshTime = currentTime
+                        exclusionsMap.clear()
+                        facilityRepository.updateLocalFacilities(facilityExclusion = it)
+                    }
                 }
+                _isSuccess.postValue(result?.isSuccessful ?: false)
             }
-            _isSuccess.postValue(result?.isSuccessful ?: false)
         }
     }
 

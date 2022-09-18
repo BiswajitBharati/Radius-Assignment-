@@ -1,9 +1,9 @@
 package com.radiusagent.assignment.di
 
-import com.radiusagent.assignment.data.api.FacilityLocalDataSource
-import com.radiusagent.assignment.data.api.FacilityNetworkDataSource
-import com.radiusagent.assignment.data.api.FacilityService
-import com.radiusagent.assignment.data.api.ServiceProvider
+import android.content.Context
+import android.content.SharedPreferences
+import com.radiusagent.assignment.RadiusApplication
+import com.radiusagent.assignment.data.api.*
 import com.radiusagent.assignment.data.model.ExclusionsModel
 import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.model.OptionsModel
@@ -56,5 +56,17 @@ class FacilitiesModule {
     @Singleton
     fun provideRealmConfiguration() : RealmConfiguration {
         return RealmConfiguration.Builder(schema = setOf(FacilitiesModel::class, OptionsModel::class, ExclusionsModel::class)).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppPreference(sharedPreferences: SharedPreferences) : AppPreferences {
+        return AppPreferences(sharedPreferences = sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreference() : SharedPreferences {
+        return RadiusApplication.getApplicationContext().getSharedPreferences("com.radiusagent.assignment.PREF", Context.MODE_PRIVATE)
     }
 }

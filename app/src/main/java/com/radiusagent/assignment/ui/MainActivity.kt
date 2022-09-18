@@ -47,6 +47,11 @@ class MainActivity : AppCompatActivity() {
         initObservers()
     }
 
+    override fun onResume() {
+        super.onResume()
+        mainViewModel.getNetworkFacilities(isForceRefresh = false)
+    }
+
     private fun initObservers() {
         Log.d(TAG, "initObservers()")
         mainViewModel.isSuccess.observe(this, this::onFacilitiesResponse)
