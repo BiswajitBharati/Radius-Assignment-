@@ -5,6 +5,10 @@
     
     <data>
         <variable
+            name="facilitiesAdapter"
+            type="com.radiusagent.assignment.ui.adapter.FacilitiesAdapter" />
+
+        <variable
             name="mainViewModel"
             type="com.radiusagent.assignment.ui.MainViewModel" />
     </data>
@@ -13,6 +17,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.MainActivity">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/outerRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:adapter="@{facilitiesAdapter}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_facilities" />
 
         <TextView
             android:layout_width="wrap_content"
