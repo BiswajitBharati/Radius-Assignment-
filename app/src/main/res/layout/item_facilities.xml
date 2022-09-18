@@ -7,7 +7,7 @@
         <import type="com.radiusagent.assignment.data.model.OptionsModel" />
         <variable
             name="optionsListener"
-            type="com.radiusagent.assignment.ui.ItemClickListener&lt;OptionsModel>" />
+            type="com.radiusagent.assignment.ui.ItemClickListener&lt;String, OptionsModel>" />
         <variable
             name="facilities"
             type="com.radiusagent.assignment.data.model.FacilitiesModel" />
@@ -39,6 +39,7 @@
             android:layout_marginEnd="16dp"
             app:setOptionsListener="@{optionsListener}"
             app:setOptions="@{facilities.options}"
+            app:facilityId="@{facilities.facilityId}"
             android:orientation="vertical"
             app:spanCount="2"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

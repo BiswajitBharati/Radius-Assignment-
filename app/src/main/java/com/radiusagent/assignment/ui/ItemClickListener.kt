@@ -1,5 +1,5 @@
 package com.radiusagent.assignment.ui
 
-interface ItemClickListener<I> {
-    fun onClickListener(item: I)
+interface ItemClickListener<K, I> {
+    fun onClickListener(key: K, item: I)
 }

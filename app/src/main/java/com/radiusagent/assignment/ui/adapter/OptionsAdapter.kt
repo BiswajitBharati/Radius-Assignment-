@@ -1,14 +1,20 @@
 package com.radiusagent.assignment.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.radiusagent.assignment.data.model.ExclusionsModel
 import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.databinding.ItemOptionsBinding
 import com.radiusagent.assignment.ui.ItemClickListener
 
-class OptionsAdapter(val listener: ItemClickListener<OptionsModel>) : ListAdapter<OptionsModel, CustomViewHolder>(Companion) {
+class OptionsAdapter(private val facilityId: String, private val listener: ItemClickListener<String, OptionsModel>) : ListAdapter<OptionsModel, CustomViewHolder>(Companion) {
+
+    private var exclusions: ArrayList<ExclusionsModel> = arrayListOf()
+    private var selectedId: String? = null
+
     companion object : DiffUtil.ItemCallback<OptionsModel>() {
         override fun areItemsTheSame(oldItem: OptionsModel, newItem: OptionsModel): Boolean {
             return  oldItem === newItem
@@ -32,6 +38,23 @@ class OptionsAdapter(val listener: ItemClickListener<OptionsModel>) : ListAdapte
 
         itemBinding.optionsListener = listener
         itemBinding.option = currentOption
+        itemBinding.facilityId = facilityId
+        itemBinding.isSelected = selectedId == currentOption.id
+        Log.d("OptionsAdapter", "onBindViewHolder() == facilityId: $facilityId selectedId: $selectedId")
+        itemBinding.isUnderExclusion = if (exclusions.isEmpty()) false
+        else null != exclusions.find { it.optionsId == currentOption.id }
+
         itemBinding.executePendingBindings()
+    }
+
+    fun updateSelectedOption(selectedId: String?) {
+        Log.d("OptionsAdapter", "updateSelectedOption() == selectedId: $selectedId")
+        this.selectedId = selectedId
+    }
+
+    fun updateExclusions(exclusions: List<ExclusionsModel>?) {
+        Log.d("OptionsAdapter", "updateExclusions() == exclusions: ${exclusions?.size}")
+        this.exclusions.clear()
+        this.exclusions.addAll(exclusions ?: arrayListOf())
     }
 }

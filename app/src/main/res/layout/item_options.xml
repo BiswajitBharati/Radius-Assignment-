@@ -11,12 +11,24 @@
         <variable
             name="option"
             type="com.radiusagent.assignment.data.model.OptionsModel" />
+        <variable
+            name="facilityId"
+            type="String" />
+        <variable
+            name="isUnderExclusion"
+            type="Boolean" />
+        <variable
+            name="isSelected"
+            type="Boolean" />
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/optionRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{()-> optionsListener.onClickListener(option)}"
+        app:exclusionState="@{isUnderExclusion}"
+        android:alpha="@{isUnderExclusion ? 0.5f : 1.0f}"
+        android:onClick="@{()-> optionsListener.onClickListener(facilityId, option)}"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
         app:cardBackgroundColor="@color/white"
@@ -25,7 +37,9 @@
         app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/optionChild"
+            android:background="@{isSelected ? @color/teal_200 : @color/white}"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -44,15 +58,17 @@
 
             <TextView
                 android:id="@+id/name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@{option.name}"
                 android:textSize="16sp"
                 tools:text="Android Programming"
-                app:layout_constraintBottom_toBottomOf="@+id/icon"
+                android:ellipsize="end"
+                android:maxLines="2"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/icon"
                 app:layout_constraintStart_toEndOf="@+id/icon"
                 app:layout_constraintTop_toTopOf="@+id/icon" />
 

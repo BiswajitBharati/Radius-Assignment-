@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.radiusagent.assignment.data.model.FacilitiesModel
+import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.data.repository.FacilityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.notifications.ResultsChange
@@ -23,15 +24,30 @@ class MainViewModel @Inject constructor(private val facilityRepository: Facility
     private var jobFacilities: Job? = null
     private var jobNwFacilities: Job? = null
 
+    private val _isSuccess = MutableLiveData<Boolean>()
+    val isSuccess: LiveData<Boolean> = _isSuccess
+
     private val _facilities = MutableLiveData<List<FacilitiesModel>>()
     val facilities: LiveData<List<FacilitiesModel>> = _facilities
 
-    private val _isSuccess = MutableLiveData<Boolean>()
-    val isSuccess: LiveData<Boolean> = _isSuccess
+    private val _exclusionsUpdated = MutableLiveData<Boolean>()
+    val exclusionsUpdated: LiveData<Boolean> = _exclusionsUpdated
+
+    private val exclusionsMap: HashMap<String, OptionsModel> = hashMapOf()
+    fun getExclusions() : HashMap<String, OptionsModel>{
+        return exclusionsMap
+    }
+
+    fun setExclusions(key: String, options: OptionsModel) {
+        Log.d(TAG, "setExclusions() == key: $key options: $options")
+        exclusionsMap[key] = options
+        _exclusionsUpdated.value = true
+    }
 
     init {
         Log.d(TAG, "init")
         getLocalFacilities()
+        _exclusionsUpdated.value = false
     }
 
     private fun getLocalFacilities() {

@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.radiusagent.assignment.R
-import com.radiusagent.assignment.data.model.Facilities
 import com.radiusagent.assignment.data.model.FacilitiesModel
 import com.radiusagent.assignment.data.model.OptionsModel
 import com.radiusagent.assignment.databinding.ActivityMainBinding
@@ -26,9 +25,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var facilitiesAdapter: FacilitiesAdapter
 
-    val itemClickListener = object : ItemClickListener<OptionsModel> {
-        override fun onClickListener(item: OptionsModel) {
-            Toast.makeText(baseContext, "You click ${item.name}", Toast.LENGTH_SHORT).show()
+    private val itemClickListener = object : ItemClickListener<String, OptionsModel> {
+        override fun onClickListener(key: String, item: OptionsModel) {
+            Log.d(TAG, "onClickListener()")
+            mainViewModel.setExclusions(key = key, options = item)
         }
     }
 
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
 
-        facilitiesAdapter = FacilitiesAdapter(itemClickListener)
+        facilitiesAdapter = FacilitiesAdapter(exclusionsMap = mainViewModel.getExclusions(), listener = itemClickListener)
         facilitiesAdapter.submitList(mainViewModel.facilities.value ?: realmListOf())
         binding.facilitiesAdapter = facilitiesAdapter
 
@@ -51,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "initObservers()")
         mainViewModel.isSuccess.observe(this, this::onFacilitiesResponse)
         mainViewModel.facilities.observe(this, this::onFacilitiesResult)
+        mainViewModel.exclusionsUpdated.observe(this, this::onExclusionUpdate)
+    }
+
+    private fun onExclusionUpdate(isUpdated: Boolean) {
+        Log.d(TAG, "onExclusionUpdate() == isUpdated: $isUpdated")
+        if (isUpdated) facilitiesAdapter.notifyDataSetChanged()
     }
 
     private fun onFacilitiesResult(facilities: List<FacilitiesModel>?) {
