@@ -52,6 +52,10 @@ class MainViewModel @Inject constructor(private val appPreferences: AppPreferenc
         Log.d(TAG, "init")
         getLocalFacilities()
         _exclusionsUpdated.value = false
+
+        /*As of now fetching the Facilities from network API has been trigger
+         when app launches & with an interval of 24 Hour!*/
+        getNetworkFacilities(isForceRefresh = false)
     }
 
     private fun getLocalFacilities() {
