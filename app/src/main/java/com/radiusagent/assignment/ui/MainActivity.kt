@@ -1,6 +1,10 @@
 package com.radiusagent.assignment.ui
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +23,19 @@ import io.realm.kotlin.ext.realmListOf
 class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = MainActivity::class.java.name
+
+        fun getPendingIntent(context: Context, requestCode: Int) : PendingIntent {
+            return PendingIntent.getActivity(
+                context,
+                requestCode,
+                Intent(context, MainActivity::class.java),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                } else {
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                }
+            )
+        }
     }
 
     lateinit var binding: ActivityMainBinding

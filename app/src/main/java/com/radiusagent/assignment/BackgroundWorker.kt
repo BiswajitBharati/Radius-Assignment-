@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.radiusagent.assignment.ui.MainActivity
 
 class BackgroundWorker(private val context : Context, private val params : WorkerParameters) : Worker(context, params) {
     companion object {
@@ -35,6 +36,7 @@ class BackgroundWorker(private val context : Context, private val params : Worke
         )
             .setContentTitle(title)
             .setContentText(message)
+            .setContentIntent(MainActivity.getPendingIntent(context = context, requestCode = 1))
             .setSmallIcon(R.mipmap.ic_launcher)
         notificationManager.notify(1, notification.build())
     }
